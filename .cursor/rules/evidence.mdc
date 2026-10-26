@@ -1,0 +1,11 @@
+---
+description: Disciplina de evidência
+globs: docs/**
+alwaysApply: false
+---
+
+# Evidência
+
+- Dado = o que o lab ou a suíte mediu. Inferência = o que nós concluímos. Prefixe inferência com `Inferência:`.
+- Plausibilidade de LLM não é evidência de prevalência.
+- O lab controlado mede o detector, não a frequência em campo.

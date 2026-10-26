@@ -1,0 +1,59 @@
+# Segredos e ambiente local
+.env
+.env.*
+!.env.exemplo
+.envrc
+.direnv/
+.lab-token
+**/.lab-token
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+id_dsa
+id_dsa.pub
+id_ecdsa
+id_ecdsa.pub
+credentials.json
+secrets.json
+.secrets/
+.aws/
+.pypirc
+*.tfstate
+*.tfstate.backup
+
+# Lab (token do Gitea, saídas de rodada, sqlite local)
+lab/runs/
+lab/**/*.sqlite
+lab/**/*.db
+
+# Estado local do motor
+.lateral/last/
+.lateral/intents.json
+
+# Python
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/

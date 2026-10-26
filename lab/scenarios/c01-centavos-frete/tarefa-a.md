@@ -1,0 +1,1 @@
+Para evitar erros de ponto flutuante, migre todos os valores monetários do pacote `loja` de reais (`float`) para centavos inteiros (`int`): preços de item, subtotal, total, imposto e desconto. Atualize os chamadores, a documentação e os testes.

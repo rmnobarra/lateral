@@ -1,0 +1,4 @@
+harnesses = ["cursor", "claude", "kiro", "codex", "agy"]
+base_branch = "main"
+intent = true
+intent_transcripts = true

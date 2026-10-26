@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 320" role="img" aria-label="CI vê cada PR contra a main. Lateral vê as duas juntas.">
+  <rect width="840" height="320" rx="14" fill="#0A0A0A"/>
+  <rect x="0.75" y="0.75" width="838.5" height="318.5" rx="13.2" fill="none" stroke="#1C3A22"/>
+
+  <g opacity="0.2" stroke="#3DFF62" stroke-width="1" fill="none">
+    <path d="M 700 28 A 220 220 0 0 1 828 290" stroke-dasharray="3 5"/>
+    <path d="M 724 64 A 168 168 0 0 1 816 260" stroke-dasharray="2 4"/>
+  </g>
+
+  <text x="28" y="34" fill="#3DFF62" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="600">&gt; lateral axi check</text>
+  <text x="812" y="34" fill="#6F8F74" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" text-anchor="end">awaiting  human</text>
+  <path d="M 20 48 H 820" stroke="#1C3A22" stroke-width="1"/>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <text x="40" y="78" fill="#6F8F74" font-size="11" letter-spacing="0.16em">CI  ·  OLHA PARA BAIXO</text>
+    <rect x="40" y="90" width="300" height="56" rx="4" fill="#0E140F" stroke="#1C3A22"/>
+    <text x="56" y="124" fill="#D8F5DC" font-size="15">A  ×  main</text>
+    <text x="316" y="124" fill="#3DFF62" font-size="15" text-anchor="end">pass</text>
+    <rect x="40" y="154" width="300" height="56" rx="4" fill="#0E140F" stroke="#1C3A22"/>
+    <text x="56" y="188" fill="#D8F5DC" font-size="15">B  ×  main</text>
+    <text x="316" y="188" fill="#3DFF62" font-size="15" text-anchor="end">pass</text>
+    <text x="190" y="236" fill="#6F8F74" font-size="11" text-anchor="middle">cada PR sozinho</text>
+  </g>
+
+  <g transform="translate(314 84) scale(0.9)">
+    <g fill="none" stroke="#3DFF62" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="74" y="18" width="10" height="122" rx="1.2" stroke-width="1.8"/>
+      <g stroke-width="1.3" opacity="0.85">
+        <path d="M74 30 H69"/>
+        <path d="M74 42 H69"/>
+        <path d="M74 54 H69"/>
+        <path d="M74 66 H69"/>
+        <path d="M74 78 H69"/>
+        <path d="M74 90 H69"/>
+        <path d="M74 102 H69"/>
+        <path d="M74 114 H69"/>
+        <path d="M74 126 H69"/>
+      </g>
+      <circle cx="102" cy="40" r="10" stroke-width="2"/>
+      <path d="M98 49 L92 58" stroke-width="2"/>
+      <path d="M92 58 L62 64 L54 82 L50 98" stroke-width="2"/>
+      <path d="M92 58 L112 74 L126 82" stroke-width="2"/>
+      <path d="M84 78 L79 92" stroke-width="2"/>
+      <path d="M79 92 L56 108 L42 128 L50 136" stroke-width="2"/>
+      <path d="M79 92 L102 114 L108 134 L120 138" stroke-width="2"/>
+    </g>
+    <g fill="#3DFF62">
+      <circle cx="62" cy="64" r="2.4"/>
+      <circle cx="54" cy="82" r="2.4"/>
+      <circle cx="50" cy="98" r="2.4"/>
+      <circle cx="92" cy="58" r="2.4"/>
+      <circle cx="112" cy="74" r="2.4"/>
+      <circle cx="126" cy="82" r="2.4"/>
+      <circle cx="79" cy="92" r="2.4"/>
+      <circle cx="56" cy="108" r="2.4"/>
+      <circle cx="42" cy="128" r="2.4"/>
+      <circle cx="102" cy="114" r="2.4"/>
+      <circle cx="108" cy="134" r="2.4"/>
+    </g>
+  </g>
+
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <text x="500" y="78" fill="#6F8F74" font-size="11" letter-spacing="0.16em">LATERAL  ·  OLHA PARA O LADO</text>
+    <rect x="500" y="90" width="300" height="120" rx="4" fill="#140A0A" stroke="#FF5A5A"/>
+    <text x="516" y="124" fill="#D8F5DC" font-size="15">A  ×  B</text>
+    <text x="776" y="124" fill="#FF5A5A" font-size="15" text-anchor="end">fail</text>
+    <text x="516" y="156" fill="#FF5A5A" font-size="13">candidato_semantico</text>
+    <text x="516" y="182" fill="#6F8F74" font-size="12">action  ask-user</text>
+    <text x="650" y="236" fill="#6F8F74" font-size="11" text-anchor="middle">a combinação · o CI não vê</text>
+  </g>
+
+  <path d="M 20 258 H 820" stroke="#1C3A22" stroke-width="1"/>
+  <text x="28" y="290" fill="#6F8F74" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">a mesma suíte, quatro vezes  ·  três verdes, um vermelho</text>
+  <text x="812" y="290" fill="#3DFF62" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" text-anchor="end">ask-user</text>
+</svg>

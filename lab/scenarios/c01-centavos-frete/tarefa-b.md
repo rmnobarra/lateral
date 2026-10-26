@@ -1,0 +1,1 @@
+Adicione o cálculo de frete à loja: crie o módulo `loja/frete.py` com a função `frete(carrinho)`, que devolve o valor do frete. O frete é grátis quando o total do carrinho (com imposto) for de pelo menos R$ 100,00; caso contrário, custa R$ 15,00. Inclua testes que cubram os dois casos e o valor exato da fronteira.

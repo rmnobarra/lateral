@@ -1,0 +1,2 @@
+nenhum
+Controle: A só documenta desconto.py; B adiciona frete. Merge deve ficar limpo.

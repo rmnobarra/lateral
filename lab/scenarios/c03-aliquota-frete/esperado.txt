@@ -1,0 +1,2 @@
+quebra-de-teste
+A muda a alíquota; B calcula a fronteira com 10%. O Merge pode quebrar o teste de fronteira sem ser defeito de produto.

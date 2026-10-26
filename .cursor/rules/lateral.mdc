@@ -1,0 +1,11 @@
+---
+description: Regras permanentes do Lateral
+alwaysApply: true
+---
+
+# Lateral
+
+- Idioma: pt-BR.
+- O motor vive em `lateral/`. O laboratório vive em `lab/`. O deck vive em `docs/produto.html`.
+- Status válidos de um par: `conflito_textual`, `pais_nao_buildam`, `conflito_build`, `base_nao_builda`, `candidato_semantico`, `risco_intencao`, `limpo`.
+- Lateral acusa e documenta. Não faz merge. Não apaga teste que falhou no Merge.

@@ -1,0 +1,2 @@
+conflito semantico
+Mecanismo: A migra para centavos; B compara o total com 100 e devolve 15. No Merge, 100 passa a significar 100 centavos (R$ 1,00).

@@ -1,0 +1,10 @@
+---
+description: Lateral instalado neste repositório
+alwaysApply: true
+---
+
+# Lateral
+
+- Antes de mergear com outras feature branches abertas, rode `python -m lateral axi check`.
+- Leia o JSON do AXI (ou `.lateral/last/lateral.md`). Não mescle e não apague teste vermelho.
+- Commands: `/lateral`, `/lateral-scan`, `/lateral-status`, `/lateral-intent`.

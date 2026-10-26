@@ -1,0 +1,2 @@
+conflito textual ou trabalho duplicado
+Os dois lados criam o mesmo módulo com regras diferentes. Awareness deve marcar overlap vermelho; intent deve marcar duplicate_work.

@@ -1,0 +1,13 @@
+---
+description: Convenções do laboratório Gitea
+globs: lab/**
+alwaysApply: false
+---
+
+# Laboratório
+
+- Gitea na porta 3310 (`LAB_PORTA`).
+- Seed em `lab/seed`. Não commitar `__pycache__`.
+- `./lab.sh demo` usa fixtures. `./lab.sh rodar` usa Haiku e gasta token.
+- Saída em `lab/runs/<cenario>/<timestamp>/` (`lateral.json`, logs, esperado.txt).
+- Usuário do Gitea: `lab` / `lab-local-123`. Token em `lab/.lab-token` (ignorado pelo git).

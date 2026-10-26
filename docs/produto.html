@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lateral — o produto</title>
+  <link rel="icon" href="icone.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --card: #0E140F;
+      --ink: #D8F5DC;
+      --mute: #6F8F74;
+      --line: #1C3A22;
+      --green: #3DFF62;
+      --green-dim: #163820;
+      --ok: #3DFF62;
+      --fail: #FF5A5A;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; height: 100%;
+      background: var(--bg); color: var(--ink);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 40;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 2px,
+        color-mix(in srgb, var(--green) 4%, transparent) 3px
+      );
+      opacity: 0.55;
+    }
+    #deck { height: 100%; }
+    .slide {
+      display: none;
+      height: 100%;
+      padding: 6vh 6vw 9vh;
+      flex-direction: column;
+      gap: 1.15rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide.on { display: flex; }
+    .slide.hero { justify-content: center; gap: 1.4rem; }
+    .slide > *:not(.z-cut) { position: relative; z-index: 1; }
+    .slide::after {
+      content: "";
+      position: absolute; inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(color-mix(in srgb, var(--green) 7%, transparent) 1px, transparent 1px),
+        linear-gradient(90deg, color-mix(in srgb, var(--green) 7%, transparent) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(ellipse at 82% 12%, #000 0%, transparent 68%);
+      opacity: 0.45;
+    }
+    .z-cut {
+      position: absolute; top: -18%; right: -8%;
+      z-index: 0;
+      width: 52vw; height: 52vw;
+      border-radius: 50%;
+      border: 1px dashed color-mix(in srgb, var(--green) 28%, transparent);
+      box-shadow:
+        0 0 0 5vw color-mix(in srgb, var(--green) 5%, transparent),
+        0 0 0 10vw transparent,
+        0 0 0 10.05vw color-mix(in srgb, var(--green) 16%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--green) 18%, transparent);
+      pointer-events: none;
+    }
+    .kicker {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.78rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--green);
+      font-weight: 600;
+    }
+    h1 {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: clamp(1.7rem, 3.4vw, 2.7rem);
+      font-weight: 600; line-height: 1.12; margin: 0;
+      max-width: 46rem;
+      color: var(--ink);
+    }
+    .mark {
+      width: 6.2rem; height: 6.2rem;
+      display: block;
+    }
+    .wordmark {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: clamp(3.4rem, 9vw, 6.4rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      max-width: none;
+      color: var(--green);
+      font-weight: 600;
+    }
+    .lede { font-size: 1.25rem; color: var(--mute); max-width: 36rem; }
+    p { margin: 0; color: var(--mute); font-size: 1.05rem; line-height: 1.45; }
+    .rule { width: 3.2rem; height: 2px; background: var(--green); border: 0; }
+    .grid { display: grid; gap: 0.7rem; }
+    .g2 { grid-template-columns: 1fr 1fr; }
+    .g3 { grid-template-columns: 1fr 1fr 1fr; }
+    .g4 { grid-template-columns: repeat(4, 1fr); }
+    .g6 { grid-template-columns: repeat(3, 1fr); }
+    .card, .step, .q, .note, .vs, .feat {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+    }
+    .card, .feat, .vs, .note { padding: 0.95rem 1.05rem; }
+    .card h3, .feat h3, .vs h3, .q h3 {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--mute); margin: 0 0 0.35rem; font-weight: 500;
+    }
+    .card strong, .feat strong, .vs strong {
+      display: block;
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 1.15rem; font-weight: 600; color: var(--ink); line-height: 1.25;
+    }
+    .card p, .feat p, .vs p { font-size: 0.92rem; margin-top: 0.3rem; }
+    .n {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.72rem; letter-spacing: 0.12em;
+      color: var(--green); font-weight: 600; margin-bottom: 0.3rem;
+    }
+    .pipe {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.45rem;
+    }
+    .step {
+      padding: 0.85rem 0.7rem 0.95rem;
+      min-height: 7rem;
+    }
+    .step strong {
+      display: block; font-size: 0.95rem; font-weight: 600;
+      color: var(--ink); line-height: 1.25;
+    }
+    .step span { display: block; font-size: 0.82rem; color: var(--mute); margin-top: 0.28rem; line-height: 1.3; }
+    .quad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; }
+    .q { padding: 0.9rem 1rem; }
+    .q .big {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 1.45rem; font-weight: 600; margin: 0;
+    }
+    .q span { display: block; font-size: 0.8rem; color: var(--mute); margin-top: 0.28rem; line-height: 1.3; }
+    .ok { color: var(--ok); }
+    .fail { color: var(--fail); }
+    .q.hot {
+      border-color: var(--fail);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--fail) 22%, transparent);
+    }
+    .hitl {
+      display: grid;
+      grid-template-columns: 16.5rem 1fr;
+      gap: 1.1rem;
+      align-items: center;
+      background: var(--green-dim);
+      color: var(--ink);
+      border: 1px solid var(--green);
+      border-radius: 4px;
+      padding: 1.05rem 1.35rem;
+    }
+    .hitl .who {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.7rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--green); font-weight: 600;
+      margin: 0 0 0.2rem;
+    }
+    .hitl strong {
+      display: block;
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: 1.22rem; font-weight: 600; line-height: 1.2;
+      color: var(--ink);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .chip {
+      background: color-mix(in srgb, var(--green) 10%, transparent);
+      border: 1px solid color-mix(in srgb, var(--green) 40%, transparent);
+      border-radius: 99px;
+      padding: 0.32rem 0.72rem;
+      font-size: 0.82rem;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      color: var(--green);
+    }
+    .code {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      background: #071109;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.85rem 1rem;
+      font-size: 0.92rem;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.55;
+    }
+    .code b { color: var(--green); font-weight: 600; }
+    .tour { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+    .tour .card { min-height: 11rem; }
+    .money {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: clamp(3rem, 7vw, 5.2rem);
+      font-weight: 600; color: var(--green);
+      letter-spacing: -0.03em; line-height: 0.95;
+    }
+    .bars { display: grid; gap: 1rem; max-width: 46rem; }
+    .bar-row { display: grid; grid-template-columns: 9.5rem 1fr auto; gap: 0.8rem; align-items: center; }
+    .bar-row label { font-size: 0.92rem; color: var(--ink); font-weight: 600; }
+    .bar-row small { color: var(--mute); font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+    .grow { height: 1.15rem; background: var(--green-dim); border-radius: 2px; overflow: hidden; }
+    .grow i { display: block; height: 100%; width: 0; border-radius: 2px; background: var(--green); }
+    .notes { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .note { flex: 1 1 14rem; }
+    .note strong { display: block; color: var(--ink); margin-bottom: 0.25rem; }
+    .close {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 600; line-height: 1.25; margin: 0;
+      max-width: 40rem;
+      color: var(--ink);
+    }
+    .close em { font-style: normal; color: var(--green); }
+    .foot {
+      position: absolute; left: 6vw; right: 6vw; bottom: 1.4rem;
+      display: flex; justify-content: space-between;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--mute);
+      z-index: 2;
+    }
+    .hud {
+      position: fixed; right: 1.2rem; bottom: 1.15rem;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.75rem; color: var(--mute);
+      z-index: 50;
+    }
+    .progress {
+      position: fixed; left: 0; right: 0; bottom: 0; height: 3px; background: var(--green-dim);
+      z-index: 50;
+    }
+    .progress i { display: block; height: 100%; width: 0; background: var(--green); transition: width 280ms ease; }
+
+    .slide.on .rise { animation: rise 520ms cubic-bezier(.2,.7,.2,1) forwards; opacity: 0; transform: translateY(16px); }
+    .slide.on .rise:nth-child(1) { animation-delay: 80ms; }
+    .slide.on .rise:nth-child(2) { animation-delay: 180ms; }
+    .slide.on .rise:nth-child(3) { animation-delay: 280ms; }
+    .slide.on .rise:nth-child(4) { animation-delay: 380ms; }
+    .slide.on .rise:nth-child(5) { animation-delay: 480ms; }
+    .slide.on .rise:nth-child(6) { animation-delay: 580ms; }
+    .slide.on .step { animation: rise 520ms cubic-bezier(.2,.7,.2,1) forwards; opacity: 0; transform: translateY(16px); }
+    .slide.on .step:nth-child(1) { animation-delay: 120ms; }
+    .slide.on .step:nth-child(2) { animation-delay: 220ms; }
+    .slide.on .step:nth-child(3) { animation-delay: 320ms; }
+    .slide.on .step:nth-child(4) { animation-delay: 420ms; }
+    .slide.on .step:nth-child(5) { animation-delay: 520ms; }
+    .slide.on .step:nth-child(6) { animation-delay: 620ms; }
+    .slide.on .step:nth-child(7) { animation-delay: 720ms; }
+    .slide.on .q { animation: pop 480ms 0.9s cubic-bezier(.2,.7,.2,1) forwards; opacity: 0; transform: scale(0.96); }
+    .slide.on .q:nth-child(2) { animation-delay: 1.05s; }
+    .slide.on .q:nth-child(3) { animation-delay: 1.2s; }
+    .slide.on .q:nth-child(4) { animation-delay: 1.35s; }
+    .slide.on .q.hot { animation: pop 480ms 1.35s cubic-bezier(.2,.7,.2,1) forwards, pulse 1.5s 1.9s ease 2; }
+    .slide.on .hitl { animation: rise 560ms 0.25s cubic-bezier(.2,.7,.2,1) forwards; opacity: 0; transform: translateY(16px); }
+    .slide.on .chip { animation: rise 420ms cubic-bezier(.2,.7,.2,1) forwards; opacity: 0; }
+    .slide.on .chip:nth-child(1) { animation-delay: 0.45s; }
+    .slide.on .chip:nth-child(2) { animation-delay: 0.6s; }
+    .slide.on .chip:nth-child(3) { animation-delay: 0.75s; }
+    .slide.on .chip:nth-child(4) { animation-delay: 0.9s; }
+    .slide.on .token i { animation: w7 1.1s 0.4s ease forwards; }
+    .slide.on .suite i { animation: w92 1.4s 0.65s ease forwards; }
+    .slide.on .wordmark { animation: rise 700ms 0.05s cubic-bezier(.2,.7,.2,1) forwards; opacity: 0; transform: translateY(12px); }
+    .slide.on .lede { animation: rise 600ms 0.25s forwards; opacity: 0; }
+    .slide.on .money { animation: rise 700ms 0.12s forwards; opacity: 0; transform: translateY(12px); }
+
+    @keyframes rise { to { opacity: 1; transform: none; } }
+    @keyframes pop { to { opacity: 1; transform: none; } }
+    @keyframes w7 { to { width: 7%; } }
+    @keyframes w92 { to { width: 92%; } }
+    @keyframes pulse {
+      50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--fail) 28%, transparent); }
+    }
+    @media (max-width: 980px) {
+      .pipe, .quad, .g4 { grid-template-columns: 1fr 1fr; }
+      .g3, .g6, .g2, .tour { grid-template-columns: 1fr; }
+      .hitl { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="deck">
+
+    <section class="slide hero">
+      <div class="z-cut"></div>
+      <img class="mark" src="marca.svg" width="99" height="99" alt="">
+      <h1 class="wordmark">Lateral</h1>
+      <hr class="rule">
+      <p class="lede">Verificação cruzada entre feature branches. O motor entrega o que o CI não vê. A pessoa decide.</p>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">O problema</p>
+      <hr class="rule">
+      <h1>O CI pergunta se a sua branch quebra a main.</h1>
+      <p>Com agent e fábrica, várias branches avançam ao mesmo tempo. Cada PR pode estar verde — e as duas juntas, não.</p>
+      <div class="grid g3">
+        <div class="card rise"><h3>Hoje</h3><strong>Cada entrega contra a main</strong><p>O processo foi desenhado para o ritmo de sprint.</p></div>
+        <div class="card rise"><h3>Agora</h3><strong>Várias features ao mesmo tempo</strong><p>Humano e agent abrem PR em horas, não em semanas.</p></div>
+        <div class="card rise"><h3>O caro</h3><strong>O conflito só depois do merge</strong><p>Unidade, contrato, trabalho duplicado. Quem herda, paga.</p></div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">O que é</p>
+      <hr class="rule">
+      <h1>Um CLI no repositório. Cruza o trabalho paralelo antes de integrar.</h1>
+      <div class="grid g2">
+        <div class="vs rise">
+          <h3>CI de um PR</h3>
+          <strong>Olha para baixo</strong>
+          <p>A minha branch ainda combina com a main?</p>
+        </div>
+        <div class="vs rise">
+          <h3>Lateral</h3>
+          <strong>Olha para o lado</strong>
+          <p>A nossa branch ainda combina com a dele?</p>
+        </div>
+      </div>
+      <div class="grid g3">
+        <div class="card rise"><h3>Não é</h3><strong>Um agent que mescla</strong><p>Não altera o código de ninguém. Não apaga teste vermelho.</p></div>
+        <div class="card rise"><h3>É</h3><strong>Um verificador no repo</strong><p>Instala, aponta o conflito, devolve um relatório. Mora no Cursor e nos outros harness.</p></div>
+        <div class="card rise"><h3>Fecha</h3><strong>A pessoa decide</strong><p>Segue, espera ou conversa — com o cruzamento já na mesa.</p></div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">Funcionalidades</p>
+      <hr class="rule">
+      <h1>Seis coisas que o motor faz. Os testes do time fecham o veredito.</h1>
+      <div class="grid g6">
+        <div class="feat rise"><div class="n">01</div><strong>Cruza as branches abertas</strong><p>Pares de feature ativas, não só cada uma contra a main.</p></div>
+        <div class="feat rise"><div class="n">02</div><strong>Junta sem mexer no código</strong><p>Tenta as duas juntas. O que cada um está escrevendo fica onde está.</p></div>
+        <div class="feat rise"><div class="n">03</div><strong>Compila a combinação</strong><p>Se juntas não constroem, aponta antes do review.</p></div>
+        <div class="feat rise"><div class="n">04</div><strong>Testa sozinho e junto</strong><p>A mesma suíte nas quatro versões. O ponto está no quarto.</p></div>
+        <div class="feat rise"><div class="n">05</div><strong>Compara as duas tarefas</strong><p>O modelo lê o que cada lado declarou, não só o que mudou no arquivo.</p></div>
+        <div class="feat rise"><div class="n">06</div><strong>Sugere teste extra</strong><p>Só se os testes atuais não pegaram o conflito. A suíte do projeto aceita ou descarta.</p></div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">O fluxo</p>
+      <hr class="rule">
+      <h1>Da tarefa ao relatório. Sem mexer no código de ninguém.</h1>
+      <div class="pipe">
+        <div class="step"><div class="n">01</div><strong>Tarefa</strong><span>o que cada um está fazendo</span></div>
+        <div class="step"><div class="n">02</div><strong>Cruzamento</strong><span>os dois no mesmo lugar</span></div>
+        <div class="step"><div class="n">03</div><strong>Juntar</strong><span>tenta sem mexer no repo</span></div>
+        <div class="step"><div class="n">04</div><strong>Build</strong><span>a combinação compila?</span></div>
+        <div class="step"><div class="n">05</div><strong>Testes</strong><span>sozinho passa, junto quebra?</span></div>
+        <div class="step"><div class="n">06</div><strong>Intenção</strong><span>as tarefas se contradizem?</span></div>
+        <div class="step"><div class="n">07</div><strong>Teste extra</strong><span>se os atuais não pegaram o conflito</span></div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">A prova</p>
+      <hr class="rule">
+      <h1>A mesma suíte, quatro vezes. O CI de um PR só vê as duas do meio.</h1>
+      <div class="quad">
+        <div class="q"><h3>Antes das duas</h3><p class="big ok">passa</p><span>o que já estava na main</span></div>
+        <div class="q"><h3>Só a branch A</h3><p class="big ok">passa</p><span>a feature sozinha</span></div>
+        <div class="q"><h3>Só a branch B</h3><p class="big ok">passa</p><span>a outra sozinha</span></div>
+        <div class="q hot"><h3>As duas juntas</h3><p class="big fail">quebra</p><span>o CI de um PR não vê isso</span></div>
+      </div>
+      <p>Três verdes e um vermelho: conflito de combinação. É esse o caso que o Lateral existe para apontar.</p>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">Banho de loja</p>
+      <hr class="rule">
+      <h1>Três passos no dia. O resto é o motor.</h1>
+      <div class="tour">
+        <div class="card rise">
+          <div class="n">01 · na porta</div>
+          <strong>Instala no repo</strong>
+          <p>O harness ganha os commands. Cursor, Claude, Kiro, Codex, Agy.</p>
+          <pre class="code" style="margin-top:0.7rem"><b>python -m lateral init</b></pre>
+        </div>
+        <div class="card rise">
+          <div class="n">02 · a prateleira</div>
+          <strong>Cada um diz a tarefa</strong>
+          <p>Em português, o que está fazendo — não o resumo do que mudou no arquivo.</p>
+          <pre class="code" style="margin-top:0.7rem"><b>/lateral-intent</b></pre>
+        </div>
+        <div class="card rise">
+          <div class="n">03 · o caixa</div>
+          <strong>Alguém roda o check</strong>
+          <p>Humano ou agent. O JSON vai para o harness; o markdown, para a pessoa.</p>
+          <pre class="code" style="margin-top:0.7rem"><b>/lateral</b></pre>
+        </div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">Banho de loja · o que chega</p>
+      <hr class="rule">
+      <h1>Um status por par. Sempre a mesma pergunta: o que fazer agora?</h1>
+      <div class="grid g2">
+        <div class="feat rise"><div class="n">Conflito de texto</div><strong>As duas já não se encaixam</strong><p>O código não combina. A pessoa vê onde as duas se cruzam.</p></div>
+        <div class="feat rise"><div class="n">Não compila juntas</div><strong>Build da combinação</strong><p>Cada lado constrói. Juntas, não. Aponta antes do review.</p></div>
+        <div class="feat rise"><div class="n">Candidato semântico</div><strong>Teste que só quebra juntas</strong><p>Sozinho passa. Junto, a suíte vermelha. O CI de um PR estava verde.</p></div>
+        <div class="feat rise"><div class="n">Risco de intenção</div><strong>As tarefas se contradizem</strong><p>O modelo compara o que cada lado declarou. A pessoa lê os dois textos.</p></div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">Banho de loja · quem fecha</p>
+      <hr class="rule">
+      <h1>O motor entrega o que o CI não vê. A pessoa decide.</h1>
+      <div class="hitl">
+        <div>
+          <p class="who">Humano no loop</p>
+          <strong>Decide se segue, espera ou conversa.</strong>
+        </div>
+        <div class="chips">
+          <span class="chip">onde as duas se cruzam</span>
+          <span class="chip">o que quebra quando junta</span>
+          <span class="chip">as duas tarefas, lado a lado</span>
+          <span class="chip">teste extra, se a suíte não viu</span>
+        </div>
+      </div>
+      <div class="grid g3" style="margin-top:0.2rem">
+        <div class="card rise"><h3>Segue</h3><strong>O par está limpo</strong><p>Ou o alerta não resiste à leitura. Integra.</p></div>
+        <div class="card rise"><h3>Espera</h3><strong>A outra branch primeiro</strong><p>Rebase, conversa, ou os dois ajustam o contrato.</p></div>
+        <div class="card rise"><h3>Conversa</h3><strong>As tarefas brigam</strong><p>Centavos de um lado, reais do outro. Isso não se vê comparando arquivo.</p></div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">A loja · o caso</p>
+      <hr class="rule">
+      <h1>Dois PRs verdes. Uma loja. A combinação cobra frete com a régua errada.</h1>
+      <div class="grid g2">
+        <div class="vs rise">
+          <h3>Branch A</h3>
+          <strong>Cobrar em centavos</strong>
+          <p>Preço deixa de ser real. Sozinha contra a main: testes passam.</p>
+        </div>
+        <div class="vs rise">
+          <h3>Branch B</h3>
+          <strong>Frete grátis abaixo de 100</strong>
+          <p>A regra compara com 100.0 reais. Sozinha contra a main: testes passam.</p>
+        </div>
+      </div>
+      <div class="q hot rise" style="padding:1.1rem 1.2rem">
+        <h3>As duas juntas</h3>
+        <p class="big fail">quebra</p>
+        <span>O 100 da B é real. O preço da A já é centavo. O CI de cada PR não viu o outro.</span>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">Por que GenAI</p>
+      <hr class="rule">
+      <h1>Comparar arquivo lê linha. Comparar tarefa lê intenção. Quem confirma é a suíte do time.</h1>
+      <div class="grid g3">
+        <div class="card rise"><h3>O modelo lê</h3><strong>As duas tarefas</strong><p>“Cobrar em centavos” de um lado, “frete abaixo de cem reais” do outro.</p></div>
+        <div class="card rise"><h3>O modelo sugere</h3><strong>O teste que falta</strong><p>Só se os testes atuais passaram juntos. Se a suíte já pegou, não inventa.</p></div>
+        <div class="card rise"><h3>O time confirma</h3><strong>A suíte que já existe</strong><p>Passa sozinho, quebra juntas: vale. Já quebra num lado só: descarta.</p></div>
+      </div>
+      <p>No máximo duas chamadas curtas por par. O contexto é o próprio repositório. A pessoa continua no loop.</p>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">O que não faz</p>
+      <hr class="rule">
+      <h1>Aponta o conflito. Não toma o volante.</h1>
+      <div class="grid g2">
+        <div class="feat rise"><div class="n">Não</div><strong>Mescla sozinho</strong><p>Não há auto-fix. Não há “aplicar o patch e seguir”.</p></div>
+        <div class="feat rise"><div class="n">Não</div><strong>Apaga teste vermelho</strong><p>Se a combinação quebra, o teste fica. Quem herda precisa vê-lo.</p></div>
+        <div class="feat rise"><div class="n">Não</div><strong>Declara o par ok</strong><p>Suíte verde nas duas não basta. Intenção e teste extra ainda entram.</p></div>
+        <div class="feat rise"><div class="n">Não</div><strong>Trata arquivo em comum como prova</strong><p>Duas branches podem brigar sem tocar o mesmo path. O motor junta e testa, não só lista arquivo.</p></div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide">
+      <div class="z-cut"></div>
+      <p class="kicker">A conta</p>
+      <hr class="rule">
+      <div class="money">US$ 0,007</div>
+      <p>Uma rodada de dois agents no laboratório, Haiku 4.5. Gerar teste é uma chamada a mais, só se os testes atuais passaram.</p>
+      <div class="bars">
+        <div class="bar-row">
+          <label>Token / par</label>
+          <div class="grow token"><i></i></div>
+          <small>~ centavos</small>
+        </div>
+        <div class="bar-row">
+          <label>Suíte do cliente</label>
+          <div class="grow suite"><i></i></div>
+          <small>minutos de CI</small>
+        </div>
+      </div>
+      <div class="notes">
+        <div class="note rise">
+          <strong>Dezenas de pares por semana</strong>
+          ainda deixam o token pequeno diante da suíte.
+        </div>
+        <div class="note rise">
+          <strong>Horas de incidente ficam de fora</strong>
+          até um piloto medir retrabalho de verdade.
+        </div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+    <section class="slide hero">
+      <div class="z-cut"></div>
+      <p class="kicker">Fecha</p>
+      <hr class="rule">
+      <p class="close">CI pergunta: a <em>minha</em> branch quebra a main?</p>
+      <p class="close">Lateral pergunta: a <em>nossa</em> ainda combina com a dele?</p>
+      <div class="hitl" style="margin-top:1rem; max-width:46rem; grid-template-columns: 1fr">
+        <div>
+          <p class="who">Humano no loop</p>
+          <strong>O motor entrega o que o CI não vê. A pessoa decide.</strong>
+        </div>
+      </div>
+      <div class="foot"><span>Lateral</span></div>
+    </section>
+
+  </div>
+  <div class="progress"><i id="fill"></i></div>
+  <div class="hud" id="hud"></div>
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    let i = 0;
+    function show(n) {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s) => s.classList.remove("on"));
+      void slides[i].offsetWidth;
+      slides[i].classList.add("on");
+      document.getElementById("fill").style.width = ((i + 1) / slides.length * 100) + "%";
+      document.getElementById("hud").textContent = (i + 1) + " / " + slides.length + "  ·  setas  ·  F";
+    }
+    document.addEventListener("keydown", (e) => {
+      if (["ArrowRight", " ", "PageDown"].includes(e.key)) { e.preventDefault(); show(i + 1); }
+      if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); show(i - 1); }
+      if (e.key === "Home") show(0);
+      if (e.key === "End") show(slides.length - 1);
+      if (e.key === "f" || e.key === "F") {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+    document.addEventListener("click", (e) => {
+      if (e.clientX > innerWidth * 0.18) show(i + 1);
+      else show(i - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>
